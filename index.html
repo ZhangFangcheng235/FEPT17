@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FEPT17 - Minecraft服务器大探索活动</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00f0ff',
+                        secondary: '#8a2be2',
+                        accent: '#ff00ff',
+                        dark: '#0a0e17',
+                        light: '#e0e0ff',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        glow: {
+                            '0%': { textShadow: '0 0 5px #fff, 0 0 10px #00f0ff, 0 0 15px #00f0ff' },
+                            '100%': { textShadow: '0 0 10px #fff, 0 0 20px #00f0ff, 0 0 30px #00f0ff' },
+                        }
+                    }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow-glow {
+                text-shadow: 0 0 10px #00f0ff, 0 0 20px rgba(0, 240, 255, 0.5);
+            }
+            .border-glow {
+                box-shadow: 0 0 5px #00f0ff, 0 0 10px rgba(0, 240, 255, 0.5);
+            }
+            .bg-grid {
+                background-image: linear-gradient(rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+                                linear-gradient(90deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px);
+                background-size: 20px 20px;
+            }
+            .region-card-hover {
+                transition: all 0.3s ease;
+            }
+            .region-card-hover:hover {
+                transform: translateY(-10px) scale(1.02);
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark text-light min-h-screen overflow-x-hidden">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full bg-dark/80 backdrop-blur-md z-50 border-b border-primary/30">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-cube text-primary text-2xl animate-pulse-slow"></i>
+                <span class="text-xl font-bold text-primary animate-glow">FEPT17</span>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#about" class="hover:text-primary transition-colors">关于活动</a>
+                <a href="#schedule" class="hover:text-primary transition-colors">活动日程</a>
+                <a href="#servers" class="hover:text-primary transition-colors">服务器信息</a>
+                <a href="#regions" class="hover:text-primary transition-colors">赛区展示</a>
+                <a href="#vote" class="hover:text-primary transition-colors">投票专区</a>
+                <a href="#rules" class="hover:text-primary transition-colors">活动规则</a>
+            </div>
+            <button class="md:hidden text-primary text-xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header class="relative pt-24 pb-16 md:pt-32 md:pb-24 bg-grid overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-dark via-dark/90 to-dark"></div>
+        <div class="absolute top-0 left-0 w-full h-full">
+            <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full filter blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full filter blur-3xl"></div>
+        </div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 animate-glow">
+                    FEPT17
+                </h1>
+                <p class="text-xl md:text-2xl text-light/80 mb-8">第17届Minecraft服务器大探索活动</p>
+                <div class="inline-block px-6 py-3 bg-primary/20 border border-primary/50 rounded-lg mb-8">
+                    <p class="text-lg font-semibold">活动时间: 2024年8月4日 - 10日</p>
+                    <p class="text-light/70">每日上午10:00 - 晚上20:00</p>
+                </div>
+                <a href="#servers" class="inline-block px-8 py-4 bg-primary text-dark font-bold rounded-lg hover:bg-primary/80 transition-all border-glow">
+                    立即加入 <i class="fa fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+        <div class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-dark to-transparent"></div>
+    </header>
+
+    <!-- 关于活动 -->
+    <section id="about" class="py-16 md:py-24">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-primary">关于FEPT17</h2>
+                <div class="bg-dark/50 border border-primary/20 rounded-xl p-6 md:p-8 backdrop-blur-sm">
+                    <p class="mb-4 text-light/90">FEPT17是FEPT组织举办的第17届Minecraft服务器大探索活动，作为每年一度的盛事，我们致力于为Minecraft玩家打造一场精彩绝伦的冒险与竞技盛宴。</p>
+                    <p class="mb-4 text-light/90">今年的活动将在8月4日至10日举行，每日开放时间为上午10:00至晚上20:00。玩家们将有机会探索精心设计的九大特色赛区，挑战极限攀爬，收集珍贵资源，并最终在南极赛区展开激烈的PVP对决。</p>
+                    <p class="text-light/90">无论你是建筑大师、探险专家还是PVP高手，都能在FEPT17找到属于自己的舞台。准备好了吗？让我们一起创造属于这个夏天的 Minecraft 传奇！</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 活动日程 -->
+    <section id="schedule" class="py-16 md:py-24 bg-dark/50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center text-primary">活动日程</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="relative">
+                    <!-- 时间线 -->
+                    <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-primary/30"></div>
+                    
+                    <!-- 日程项 -->
+                    <div class="schedule-item mb-12 flex flex-col md:flex-row items-center">
+                        <div class="md:w-1/2 md:pr-12 md:text-right mb-4 md:mb-0">
+                            <div class="bg-dark border border-primary/30 rounded-lg p-4 md:ml-auto md:max-w-md region-card-hover">
+                                <h3 class="text-xl font-bold text-primary mb-2">8月4日</h3>
+                                <p class="text-light/70">开幕式 & 探索启程</p>
+                                <p class="text-light/90">服务器正式开放，玩家熟悉地图，开始赛区探索</p>
+                            </div>
+                        </div>
+                        <div class="z-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center"><i class="fa fa-flag"></i></div>
+                        <div class="md:w-1/2 md:pl-12 hidden md:block"></div>
+                    </div>
+
+                    <div class="schedule-item mb-12 flex flex-col md:flex-row items-center">
+                        <div class="md:w-1/2 md:pr-12 hidden md:block"></div>
+                        <div class="z-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center"><i class="fa fa-map"></i></div>
+                        <div class="md:w-1/2 md:pl-12 mt-4 md:mt-0">
+                            <div class="bg-dark border border-primary/30 rounded-lg p-4 md:mr-auto md:max-w-md region-card-hover">
+                                <h3 class="text-xl font-bold text-primary mb-2">8月5日-8日</h3>
+                                <p class="text-light/70">赛区探索阶段</p>
+                                <p class="text-light/90">玩家深入各大赛区，收集资源，挑战攀爬，建立基地</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="schedule-item mb-12 flex flex-col md:flex-row items-center">
+                        <div class="md:w-1/2 md:pr-12 md:text-right mb-4 md:mb-0">
+                            <div class="bg-dark border border-primary/30 rounded-lg p-4 md:ml-auto md:max-w-md region-card-hover">
+                                <h3 class="text-xl font-bold text-primary mb-2">8月9日</h3>
+                                <p class="text-light/70">半决赛</p>
+                                <p class="text-light/90">各赛区优胜者在南极赛区展开激烈角逐，争夺决赛资格</p>
+                            </div>
+                        </div>
+                        <div class="z-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center"><i class="fa fa-trophy"></i></div>
+                        <div class="md:w-1/2 md:pl-12 hidden md:block"></div>
+                    </div>
+
+                    <div class="schedule-item flex flex-col md:flex-row items-center">
+                        <div class="md:w-1/2 md:pr-12 hidden md:block"></div>
+                        <div class="z-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center"><i class="fa fa-crown"></i></div>
+                        <div class="md:w-1/2 md:pl-12 mt-4 md:mt-0">
+                            <div class="bg-dark border border-primary/30 rounded-lg p-4 md:mr-auto md:max-w-md region-card-hover">
+                                <h3 class="text-xl font-bold text-primary mb-2">8月10日</h3>
+                                <p class="text-light/70">总决赛 & 闭幕式</p>
+                                <p class="text-light/90">最终对决，评选FEPT之王，颁发奖励，活动圆满结束</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 服务器信息 -->
+    <section id="servers" class="py-16 md:py-24">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center text-primary">服务器信息</h2>
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                <div class="bg-dark/50 border border-primary/20 rounded-xl p-6 md:p-8 backdrop-blur-sm region-card-hover">
+                    <h3 class="text-2xl font-bold mb-4 text-primary flex items-center">
+                        <i class="fa fa-server mr-2"></i> 连接信息
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-light/70 mb-1">游戏版本</p>
+                            <p class="font-mono bg-dark/80 p-2 rounded border border-primary/30">1.21.4</p>
+                        </div>
+                        <div>
+                            <p class="text-light/70 mb-1">登录方式</p>
+                            <p class="font-mono bg-dark/80 p-2 rounded border border-primary/30">Littleskin登录</p>
+                        </div>
+                        <div>
+                            <p class="text-light/70 mb-1">服务器IP</p>
+                            <div class="flex">
+                                <p id="server-ip" class="font-mono bg-dark/80 p-2 rounded-l border border-r-0 border-primary/30 flex-1">vip.cd.frp.one:52634</p>
+                                <button onclick="copyIp()" class="bg-primary/20 hover:bg-primary/30 text-primary p-2 rounded-r border border-primary/30 transition-colors">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-dark/50 border border-primary/20 rounded-xl p-6 md:p-8 backdrop-blur-sm region-card-hover">
+                    <h3 class="text-2xl font-bold mb-4 text-primary flex items-center">
+                        <i class="fa fa-list-ol mr-2"></i> 连接教程
+                    </h3>
+                    <ol class="space-y-3 text-light/90">
+                        <li class="flex"><span class="text-primary mr-2">1.</span> 确保你已安装Minecraft 1.21.4客户端</li>
+                        <li class="flex"><span class="text-primary mr-2">2.</span> 通过Littleskin账号登录游戏</li>
+                        <li class="flex"><span class="text-primary mr-2">3.</span> 进入多人游戏界面，点击"添加服务器"</li>
+                        <li class="flex"><span class="text-primary mr-2">4.</span> 输入服务器名称"FEPT17"和IP地址</li>
+                        <li class="flex"><span class="text-primary mr-2">5.</span> 点击"完成"并选择服务器进入</li>
+                        <li class="flex"><span class="text-primary mr-2">6.</span> 首次进入需同意活动规则，随后即可开始游戏</li>
+                    </ol>
+                    <div class="mt-6 p-4 bg-dark/80 border border-secondary/30 rounded-lg">
+                        <p class="text-secondary/90 flex items-center"><i class="fa fa-info-circle mr-2"></i> 如遇连接问题，请检查你的网络设置或联系客服支持</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 赛区展示 -->
+    <section id="regions" class="py-16 md:py-24 bg-dark/50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center text-primary">特色赛区</h2>
+            <p class="text-center text-light/70 mb-12 max-w-2xl mx-auto">探索九大精心设计的特色赛区，每个赛区都有独特的地形和挑战等待你的征服</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <!-- 赛区卡片 - 日本赛区 -->
+                <div class="region-card bg-dark/60 border border-primary/20 rounded-xl overflow-hidden region-card-hover">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://picsum.photos/id/1015/800/500" alt="日本赛区" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold text-white text-shadow-glow">日本赛区</h3>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-light/80 mb-4">以日本富士山为灵感设计的高耸火山地形，陡峭的山坡和隐藏的洞穴等待探索。</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary"><i class="fa fa-map-marker mr-1"></i> 东亚区域</span>
+                            <button class="text-light/70 hover:text-primary transition-colors">
+                                了解更多 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 赛区卡片 - 俄罗斯赛区 -->
+                <div class="region-card bg-dark/60 border border-primary/20 rounded-xl overflow-hidden region-card-hover">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://picsum.photos/id/1018/800/500" alt="俄罗斯赛区" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold text-white text-shadow-glow">俄罗斯赛区</h3>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-light/80 mb-4">冰雪覆盖的西伯利亚风格地形，冰刺和冻湖构成了极具挑战性的攀爬环境。</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary"><i class="fa fa-map-marker mr-1"></i> 北欧区域</span>
+                            <button class="text-light/70 hover:text-primary transition-colors">
+                                了解更多 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 赛区卡片 - 夏威夷赛区 -->
+                <div class="region-card bg-dark/60 border border-primary/20 rounded-xl overflow-hidden region-card-hover">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://picsum.photos/id/1036/800/500" alt="夏威夷赛区" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold text-white text-shadow-glow">夏威夷赛区</h3>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-light/80 mb-4">热带海岛风格地形，四周环绕蔚蓝海洋，中央是高耸的火山锥。</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary"><i class="fa fa-map-marker mr-1"></i> 太平洋区域</span>
+                            <button class="text-light/70 hover:text-primary transition-colors">
+                                了解更多 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 赛区卡片 - 埃及赛区 -->
+                <div class="region-card bg-dark/60 border border-primary/20 rounded-xl overflow-hidden region-card-hover">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://picsum.photos/id/1029/800/500" alt="埃及赛区" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold text-white text-shadow-glow">埃及赛区</h3>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-light/80 mb-4">沙漠金字塔主题地形，隐藏着古老的宝藏和危险的陷阱。</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary"><i class="fa fa-map-marker mr-1"></i> 非洲区域</span>
+                            <button class="text-light/70 hover:text-primary transition-colors">
+                                了解更多 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 赛区卡片 - 巴西赛区 -->
+                <div class="region-card bg-dark/60 border border-primary/20 rounded-xl overflow-hidden region-card-hover">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://picsum.photos/id/1039/800/500" alt="巴西赛区" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold text-white text-shadow-glow">巴西赛区</h3>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-light/80 mb-4">亚马逊雨林风格地形，茂密的树木和河流构成了复杂的立体探索空间。</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary"><i class="fa fa-map-marker mr-1"></i> 南美区域</span>
+                            <button class="text-light/70 hover:text-primary transition-colors">
+                                了解更多 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 赛区卡片 - 美国赛区 -->
+                <div class="region-card bg-dark/60 border border-primary/20 rounded-xl overflow-hidden region-card-hover">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://picsum.photos/id/1019/800/500" alt="美国赛区" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold text-white text-shadow-glow">美国赛区</h3>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-light/80 mb-4">以大峡谷为原型的壮丽峡谷地形，悬崖峭壁和河流交织成壮观景象。</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary"><i class="fa fa-map-marker mr-1"></i> 北美区域</span>
+                            <button class="text-light/70 hover:text-primary transition-colors">
+                                了解更多 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 赛区卡片 - 中国上海赛区 -->
+                <div class="region-card bg-dark/60 border border-primary/20 rounded-xl overflow-hidden region-card-hover">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://picsum.photos/id/1048/800/500" alt="上海赛区" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold text-white text-shadow-glow">上海赛区</h3>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-light/80 mb-4">未来都市风格的摩天大楼群，高耸入云的建筑提供了极具挑战性的攀爬体验。</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary"><i class="fa fa-map-marker mr-1"></i> 东亚区域</span>
+                            <button class="text-light/70 hover:text-primary transition-colors">
+                                了解更多 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 赛区卡片 - 瑞士赛区 -->
+                <div class="region-card bg-dark/60 border border-primary/20 rounded-xl overflow-hidden region-card-hover">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://picsum.photos/id/1037/800/500" alt="瑞士赛区" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold text-white text-shadow-glow">瑞士赛区</h3>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-light/80 mb-4">阿尔卑斯山脉风格地形，雪山、冰川和山谷构成了绝美的高山风景。</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary"><i class="fa fa-map-marker mr-1"></i> 欧洲区域</span>
+                            <button class="text-light/70 hover:text-primary transition-colors">
+                                了解更多 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 赛区卡片 - 南极赛区 -->
+                <div class="region-card bg-dark/60 border border-accent/50 rounded-xl overflow-hidden region-card-hover">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://picsum.photos/id/1025/800/500" alt="南极赛区" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold text-white text-shadow-glow">南极赛区</h3>
+                        </div>
+                        <div class="absolute top-4 right-4 bg-accent text-dark font-bold text-sm px-3 py-1 rounded-full">
+                            决赛场地
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-light/80 mb-4">冰雪覆盖的南极大陆，这里是最终PVP淘汰赛的举办地，也是所有赛区的中心。</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-accent"><i class="fa fa-map-marker mr-1"></i> 极地区域</span>
+                            <button class="text-light/70 hover:text-accent transition-colors">
+                                了解更多 <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 投票专区 -->
+    <section id="vote" class="py-16 md:py-24">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center text-primary">赛区投票</h2>
+            <p class="text-center text-light/70 mb-12 max-w-2xl mx-auto">为你最喜欢的赛区投票，每日可投一次，帮助它成为本届最受欢迎赛区！</p>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-dark/50 border border-primary/20 rounded-xl p-6 md:p-8 backdrop-blur-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <canvas id="voteChart" width="400" height="400"></canvas>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold mb-6 text-primary">为你喜爱的赛区投票</h3>
+                            <div class="space-y-4">
+                                <div class="vote-option">
+                                    <label class="flex items-center justify-between p-3 bg-dark/80 rounded-lg border border-primary/20 cursor-pointer hover:border-primary transition-colors">
+                                        <span>日本赛区</span>
+                                        <input type="radio" name="region-vote" value="japan" class="accent-primary w-5 h-5">
+                                    </label>
+                                </div>
+                                <div class="vote-option">
+                                    <label class="flex items-center justify-between p-3 bg-dark/80 rounded-lg border border-primary/20 cursor-pointer hover:border-primary transition-colors">
+                                        <span>俄罗斯赛区</span>
+                                        <input type="radio" name="region-vote" value="russia" class="accent-primary w-5 h-5">
+                                    </label>
+                                </div>
+                                <div class="vote-option">
+                                    <label class="flex items-center justify-between p-3 bg-dark/80 rounded-lg border border-primary/20 cursor-pointer hover:border-primary transition-colors">
+                                        <span>夏威夷赛区</span>
+                                        <input type="radio" name="region-vote" value="hawaii" class="accent-primary w-5 h-5">
+                                    </label>
+                                </div>
+                                <div class="vote-option">
+                                    <label class="flex items-center justify-between p-3 bg-dark/80 rounded-lg border border-primary/20 cursor-pointer hover:border-primary transition-colors">
+                                        <span>其他赛区</span>
+                                        <input type="radio" name="region-vote" value="other" class="accent-primary w-5 h-5">
+                                    </label>
+                                </div>
+                                <button id="vote-btn" class="w-full mt-4 py-3 bg-primary text-dark font-bold rounded-lg hover:bg-primary/80 transition-all border-glow">
+                                    提交投票
+                                </button>
+                                <p id="vote-status" class="text-center text-light/50 text-sm mt-2 hidden">你今日已投票，明天可以再次投票</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 活动规则 -->
+    <section id="rules" class="py-16 md:py-24 bg-dark/50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center text-primary">活动规则</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="space-y-8">
+                    <div class="bg-dark/60 border border-primary/20 rounded-xl p-6 md:p-8 backdrop-blur-sm">
+                        <h3 class="text-2xl font-bold mb-4 text-primary flex items-center">
+                            <i class="fa fa-explorer mr-2"></i> 赛区探索规则
+                        </h3>
+                        <ul class="space-y-2 text-light/90 list-disc pl-5">
+                            <li>玩家可自由探索所有九个赛区，但每个团队只能在一个赛区获取一个工具或绿宝石</li>
+                            <li>赛区内的资源点需要通过攀爬、解谜或战斗才能到达</li>
+                            <li>各赛区之间可以互相访问和掠夺，但禁止恶意破坏他人建筑</li>
+                            <li>每个赛区都有独特的地形和挑战，玩家需要根据自身特长选择目标</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-dark/60 border border-primary/20 rounded-xl p-6 md:p-8 backdrop-blur-sm">
+                        <h3 class="text-2xl font-bold mb-4 text-primary flex items-center">
+                            <i class="fa fa-gem mr-2"></i> 资源收集规则
+                        </h3>
+                        <ul class="space-y-2 text-light/90 list-disc pl-5">
+                            <li>每个赛区的顶端都藏有珍稀资源（工具或绿宝石），成功获取将为团队带来优势</li>
+                            <li>每个团队只能在每个赛区获取一次资源，且每个团队最多获取三个不同赛区的资源</li>
+                            <li>获取资源后，团队需要将其安全带回自己的基地，途中可能遭遇其他团队的拦截</li>
+                            <li>资源可用于制作高级装备，为最终的PVP淘汰赛做准备</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-dark/60 border border-primary/20 rounded-xl p-6 md:p-8 backdrop-blur-sm">
+                        <h3 class="text-2xl font-bold mb-4 text-primary flex items-center">
+                            <i class="fa fa-fist-raised mr-2"></i> PVP淘汰赛规则
+                        </h3>
+                        <ul class="space-y-2 text-light/90 list-disc pl-5">
+                            <li>最终淘汰赛在南极赛区举行，采用单败淘汰制</li>
+                            <li>每轮比赛限时15分钟，最后存活的团队获胜</li>
+                            <li>比赛中允许使用从各赛区收集的资源和制作的装备</li>
+                            <li>禁止使用第三方作弊工具或利用游戏漏洞，违规者将被取消比赛资格</li>
+                            <li>决赛获胜团队将获得"FEPT之王"称号及丰厚奖励</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-dark/60 border border-primary/20 rounded-xl p-6 md:p-8 backdrop-blur-sm">
+                        <h3 class="text-2xl font-bold mb-4 text-primary flex items-center">
+                            <i class="fa fa-trophy mr-2"></i> 奖励设置
+                        </h3>
+                        <ul class="space-y-2 text-light/90 list-disc pl-5">
+                            <li><span class="text-accent font-bold">FEPT之王</span>：冠军团队每位成员将获得限量版"FEPT之王"勋章、专属游戏内头衔及实体奖品</li>
+                            <li><span class="text-primary font-bold">亚军</span>：团队每位成员获得游戏内高级资源包和荣誉证书</li>
+                            <li><span class="text-secondary font-bold">季军</span>：团队每位成员获得游戏内稀有装备和荣誉证书</li>
+                            <li><span class="text-light font-bold">最受欢迎赛区</span>：根据投票结果，得票最高的赛区设计者将获得特别奖励</li>
+                            <li><span class="text-light font-bold">参与奖</span>：所有完成至少三个赛区探索的玩家都将获得参与纪念章</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="py-12 border-t border-primary/30 bg-dark/80">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fa fa-cube text-primary text-2xl"></i>
+                        <span class="text-xl font-bold text-primary">FEPT17</span>
+                    </div>
+                    <p class="text-light/70 mb-4">第17届Minecraft服务器大探索活动，8月4日-10日，与你不见不散！</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-light/70 hover:text-primary transition-colors"><i class="fa fa-weixin text-xl"></i></a>
+                        <a href="#" class="text-light/70 hover:text-primary transition-colors"><i class="fa fa-qq text-xl"></i></a>
+                        <a href="#" class="text-light/70 hover:text-primary transition-colors"><i class="fa fa-bilibili text-xl"></i></a>
+                        <a href="#" class="text-light/70 hover:text-primary transition-colors"><i class="fa fa-youtube-play text-xl"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4 text-primary">快速链接</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#about" class="text-light/70 hover:text-primary transition-colors">关于活动</a></li>
+                        <li><a href="#schedule" class="text-light/70 hover:text-primary transition-colors">活动日程</a></li>
+                        <li><a href="#servers" class="text-light/70 hover:text-primary transition-colors">服务器信息</a></li>
+                        <li><a href="#regions" class="text-light/70 hover:text-primary transition-colors">赛区展示</a></li>
+                        <li><a href="#vote" class="text-light/70 hover:text-primary transition-colors">投票专区</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4 text-primary">联系我们</h4>
+                    <ul class="space-y-2 text-light/70">
+                        <li class="flex items-center"><i class="fa fa-envelope mr-2 text-primary"></i> contact@fept17.com</li>
+                        <li class="flex items-center"><i class="fa fa-phone mr-2 text-primary"></i> 400-FEPT-17</li>
+                        <li class="flex items-center"><i class="fa fa-map-marker mr-2 text-primary"></i> Minecraft虚拟大厦</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 pt-6 border-t border-primary/20 text-center text-light/50">
+                <p>© 2024 FEPT组织 版权所有 | FEPT17 Minecraft服务器大探索活动</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-6 right-6 bg-primary/20 hover:bg-primary/40 text-primary w-12 h-12 rounded-full flex items-center justify-center border border-primary/50 transition-all opacity-0 invisible">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript -->
+    <script>
+        // 复制IP地址功能
+        function copyIp() {
+            const ipElement = document.getElementById('server-ip');
+            const textArea = document.createElement('textarea');
+            textArea.value = ipElement.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            // 显示复制成功提示
+            const originalText = ipElement.textContent;
+            ipElement.textContent = '已复制！';
+            ipElement.classList.add('text-accent');
+            setTimeout(() => {
+                ipElement.textContent = originalText;
+                ipElement.classList.remove('text-accent');
+            }, 2000);
+        }
+
+        // 投票功能
+        document.getElementById('vote-btn').addEventListener('click', function() {
+            const selectedOption = document.querySelector('input[name="region-vote"]:checked');
+            if (!selectedOption) {
+                alert('请选择一个赛区进行投票');
+                return;
+            }
+
+            // 模拟投票提交
+            this.disabled = true;
+            this.textContent = '投票成功！';
+            this.classList.add('bg-accent');
+            document.getElementById('vote-status').classList.remove('hidden');
+        });
+
+        // 返回顶部按钮
+        const backToTopButton = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.remove('opacity-100', 'visible');
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // 投票图表
+        const ctx = document.getElementById('voteChart').getContext('2d');
+        const voteChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['日本赛区', '俄罗斯赛区', '夏威夷赛区', '埃及赛区', '巴西赛区', '美国赛区', '上海赛区', '瑞士赛区', '南极赛区'],
+                datasets: [{
+                    data: [15, 12, 10, 8, 11, 9, 14, 7, 14],
+                    backgroundColor: [
+                        '#00f0ff', '#8a2be2', '#ff00ff', '#00ff00', '#ffff00', '#ff7f00', '#ff0000', '#7f7f7f', '#1f7fbf'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#e0e0ff',
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: '当前投票结果',
+                        color: '#00f0ff',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            bottom: 20
+                        }
+                    }
+                },
+                cutout: '60%',
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
